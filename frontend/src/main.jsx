@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import SupportDashboard from "./SupportDashboard";
+import Signup from "./Signup";
 import { createRoot } from "react-dom/client";
 import {
   Search,
@@ -22,7 +23,6 @@ import "./styles.css";
 /* =========================================================
    API / AUTH HELPERS
 ========================================================= */
-
 const getAccessToken = () => {
   return localStorage.getItem("access_token");
 };
@@ -45,7 +45,7 @@ const authHeaders = () => {
 };
 
 const API = (
-  import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api"
+  import.meta.env.VITE_API_URL || "/api"
 ).replace(/\/$/, "");
 
 /*
@@ -128,7 +128,7 @@ function getApiItems(data) {
    LOGIN
 ========================================================= */
 
-function Login({ onLogin }) {
+function Login({ onLogin , onSignup }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -405,6 +405,16 @@ function Login({ onLogin }) {
             Secure connection
 
           </div>
+          <div className="signup-prompt">
+          <span>Don't have an account?</span>
+
+          <button
+            type="button"
+            onClick={onSignup}
+          >
+            Create an account
+          </button>
+        </div>
 
         </div>
 
@@ -426,6 +436,8 @@ function App() {
   const [authenticated, setAuthenticated] = useState(
     Boolean(getAccessToken())
   );
+
+  const [showSignup, setShowSignup] = useState(false);
 
   const [tickets, setTickets] = useState(demoTickets);
 
@@ -1004,13 +1016,25 @@ useEffect(() => {
      IMPORTANT:
      All hooks are above this return.
   ========================================================= */
+if (!authenticated) {
+  if (showSignup) {
+    return (
+      <Signup
+        onBackToLogin={() => {
+          setShowSignup(false);
+        }}
+      />
+    );
+  }
 
-  if (!authenticated) {
   return (
     <Login
       onLogin={() => {
         setLoadingUser(true);
         setAuthenticated(true);
+      }}
+      onSignup={() => {
+        setShowSignup(true);
       }}
     />
   );

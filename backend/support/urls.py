@@ -8,6 +8,7 @@ from .views import (
     ConversationViewSet,
     SupportAgentListView,
     MeView,
+    RegisterView,
 )
 
 
@@ -35,6 +36,11 @@ urlpatterns = [
         "me/",
         MeView.as_view(),
         name="me"
+    ),
+    path(
+        "register/",
+        RegisterView.as_view(),
+        name="register"
     ),
 ]
 
