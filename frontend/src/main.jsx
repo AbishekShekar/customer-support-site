@@ -527,11 +527,22 @@ function App() {
     }
 
     loadTickets();
+    // Refresh ticket status periodically so customer tracking stays current.
+    const refreshInterval = window.setInterval(loadTickets, 15000);
 
     return () => {
       cancelled = true;
+      window.clearInterval(refreshInterval);
     };
   }, [authenticated]);
+
+  useEffect(() => {
+    if (!selectedTicket) return;
+    const latestTicket = tickets.find((ticket) => ticket.id === selectedTicket.id);
+    if (latestTicket && latestTicket !== selectedTicket) {
+      setSelectedTicket(latestTicket);
+    }
+  }, [tickets, selectedTicket]);
 
   /*--------------------------------------------------------
       LOAD CURRENT USER
@@ -1051,6 +1062,8 @@ if (loadingUser) {
 if (currentUser?.is_staff) {
   return (
     <SupportDashboard
+      isAdmin={Boolean(currentUser?.is_superuser)}
+      currentUserId={currentUser?.id}
       onLogout={() => {
         localStorage.removeItem("access_token");
         localStorage.removeItem("refresh_token");
@@ -1148,7 +1161,7 @@ if (currentUser?.is_staff) {
             </p>
 
             <h1>
-              Hi, Aditi. How can we help?
+              Hi, {currentUser?.username || "there"}. How can we help?
             </h1>
 
             <p className="hero-copy">
@@ -1299,6 +1312,10 @@ if (currentUser?.is_staff) {
             <button
               className="view-all"
               type="button"
+              onClick={() => {
+                setFilter("all");
+                document.getElementById("tickets")?.scrollIntoView({ behavior: "smooth" });
+              }}
             >
               View all
               <ArrowUpRight size={16} />
@@ -1876,6 +1893,10 @@ if (currentUser?.is_staff) {
                       selectedTicket.updated_at
                     ).toLocaleString()
                   : "Not available"}
+              </span>
+
+              <span>
+                Assigned agent:{" "}{selectedTicket.assigned_to_name || "Not assigned yet"}
               </span>
 
             </div>

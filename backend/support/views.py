@@ -13,6 +13,8 @@ from .serializers import (
     MessageSerializer,
     SupportAgentSerializer,
     RegisterSerializer,
+    ManagedUserSerializer,
+    CreateManagedUserSerializer,
 )
 #=========================================================
 # REGISTER VIEW
@@ -467,6 +469,70 @@ class ConversationViewSet(viewsets.ModelViewSet):
         )
 
 
+
+
+# =========================================================
+# ADMIN USER MANAGEMENT (SUPERUSER ONLY)
+# =========================================================
+
+class IsSuperUser(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return bool(
+            request.user
+            and request.user.is_authenticated
+            and request.user.is_superuser
+        )
+
+
+class UserManagementView(APIView):
+    permission_classes = [IsSuperUser]
+
+    def get(self, request):
+        users = User.objects.all().order_by("-date_joined")
+        return Response(
+            ManagedUserSerializer(users, many=True).data,
+            status=status.HTTP_200_OK,
+        )
+
+    def post(self, request):
+        serializer = CreateManagedUserSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        return Response(
+            {
+                "message": "User created successfully.",
+                "user": ManagedUserSerializer(user).data,
+            },
+            status=status.HTTP_201_CREATED,
+        )
+
+
+class UserManagementDetailView(APIView):
+    permission_classes = [IsSuperUser]
+
+    def patch(self, request, pk):
+        try:
+            user = User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        if user.pk == request.user.pk:
+            return Response(
+                {"detail": "You cannot deactivate your own account here."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if "is_active" not in request.data or not isinstance(request.data["is_active"], bool):
+            return Response(
+                {"is_active": "Provide true or false."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user.is_active = request.data["is_active"]
+        user.save(update_fields=["is_active"])
+        return Response(ManagedUserSerializer(user).data, status=status.HTTP_200_OK)
+
+
 # =========================================================
 # SUPPORT AGENTS
 # =========================================================
@@ -517,6 +583,7 @@ class MeView(APIView):
                 "username": request.user.username,
                 "email": request.user.email,
                 "is_staff": request.user.is_staff,
+                "is_superuser": request.user.is_superuser,
             },
             status=status.HTTP_200_OK,
         )

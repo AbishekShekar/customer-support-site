@@ -9,15 +9,17 @@ import {
   LogOut,
   ChevronRight,
   MessageCircle,
+  ShieldCheck,
 } from "lucide-react";
 
 import SupportTickets from "./SupportTickets";
 import SupportTeam from "./SupportTeam";
 import SupportChat from "./SupportChat";
+import UserManagement from "./UserManagement";
 
 const API = (
   import.meta.env.VITE_API_URL ||
-  "http://127.0.0.1:8000/api"
+  "/api"
 ).replace(/\/$/, "");
 
 const getAccessToken = () =>
@@ -34,7 +36,7 @@ const statusLabels = {
   resolved: "Resolved",
 };
 
-function SupportDashboard({ onLogout }) {
+function SupportDashboard({ onLogout, isAdmin = false, currentUserId }) {
   const [activePage, setActivePage] = useState("dashboard");
 
   const [tickets, setTickets] = useState([]);
@@ -223,6 +225,24 @@ function SupportDashboard({ onLogout }) {
   }
 
   /* =====================================================
+     UPDATE TICKET STATUS / RESOLUTION NOTE
+  ===================================================== */
+
+  async function updateTicketStatus(ticket, statusValue, resolutionNote) {
+    setError("");
+    const response = await fetch(`${API}/tickets/${ticket.id}/`, {
+      method: "PATCH",
+      headers: authHeaders(),
+      body: JSON.stringify({ status: statusValue, resolution_note: resolutionNote }),
+    });
+    const data = await response.json().catch(() => ({}));
+    if (response.status === 401) { onLogout(); throw new Error("Your session has expired. Please sign in again."); }
+    if (!response.ok) throw new Error(data.detail || "Unable to update ticket status.");
+    setTickets((previous) => previous.map((item) => item.id === data.id ? data : item));
+    return data;
+  }
+
+  /* =====================================================
      STATISTICS
   ===================================================== */
 
@@ -331,6 +351,17 @@ function SupportDashboard({ onLogout }) {
             Support team
           </button>
 
+          {isAdmin && (
+            <button
+              type="button"
+              className={activePage === "users" ? "active" : ""}
+              onClick={() => setActivePage("users")}
+            >
+              <ShieldCheck size={18} />
+              User management
+            </button>
+          )}
+
         </nav>
 
         <div className="support-sidebar-bottom">
@@ -365,6 +396,7 @@ function SupportDashboard({ onLogout }) {
             onAssign={(ticket) =>
               setSelectedTicket(ticket)
             }
+            onUpdateStatus={updateTicketStatus}
           />
         )}
         {/* =================================================
@@ -376,6 +408,10 @@ function SupportDashboard({ onLogout }) {
             />
             )}
 
+
+        {activePage === "users" && isAdmin && (
+          <UserManagement onLogout={onLogout} currentUserId={currentUserId} />
+        )}
 
         {/* =================================================
             SUPPORT TEAM PAGE

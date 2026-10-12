@@ -3389,3 +3389,47 @@
 .signup-prompt button:hover {
   text-decoration: underline;
 }
+
+/* =========================================================
+   ADMIN USER MANAGEMENT
+========================================================= */
+.user-admin-layout { display:grid; grid-template-columns:minmax(280px, 350px) minmax(0, 1fr); gap:20px; align-items:start; }
+.user-create-card,.user-list-card { background:#fff; border:1px solid #e5e7eb; border-radius:15px; padding:22px; min-width:0; }
+.user-form-title { display:flex; align-items:flex-start; gap:12px; margin-bottom:18px; }
+.user-form-title>span { width:40px; height:40px; display:grid; place-items:center; background:#eef8ef; color:#237247; border-radius:11px; flex-shrink:0; }
+.user-form-title h2,.user-list-heading h2 { margin:0; font-size:17px; letter-spacing:-.3px; }
+.user-form-title p,.user-list-heading p { margin:5px 0 0; color:#7b847e; font-size:12px; line-height:1.5; }
+.user-create-card label { display:grid; gap:7px; margin:15px 0; color:#4c5750; font-size:12px; font-weight:700; }
+.user-create-card input,.user-create-card select,.ticket-status-editor select,.ticket-status-editor textarea { width:100%; min-width:0; border:1px solid #dce3dd; border-radius:8px; padding:11px 12px; background:#fff; color:#17281f; font:13px 'DM Sans',sans-serif; outline-color:#75ad86; }
+.user-form-hint { color:#79837c; font-size:11px; line-height:1.55; }
+.user-create-button { display:inline-flex; justify-content:center; align-items:center; gap:8px; border:0; border-radius:8px; padding:11px 14px; background:#176f48; color:#fff; font:600 12px 'DM Sans',sans-serif; cursor:pointer; }
+.user-create-button:disabled { opacity:.65; cursor:wait; }
+.user-create-card>.user-create-button { width:100%; margin-top:6px; }
+.user-list-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:17px; }
+.user-list-heading h2 { display:flex; align-items:center; gap:8px; }
+.user-list-heading h2 svg { color:#26754d; }
+.user-list-heading>span { padding:6px 9px; border-radius:20px; background:#f0f4f0; color:#53635a; font-size:11px; font-weight:700; white-space:nowrap; }
+.managed-user-list { display:flex; flex-direction:column; }
+.managed-user-row { display:flex; align-items:center; gap:12px; padding:14px 0; border-top:1px solid #edf0ed; min-width:0; }
+.managed-user-avatar { width:38px; height:38px; flex-shrink:0; display:grid; place-items:center; border-radius:50%; background:#e6f2e5; color:#276b43; font-weight:800; }
+.managed-user-main { display:flex; flex-direction:column; gap:4px; flex:1; min-width:0; }
+.managed-user-main>strong { font-size:13px; overflow-wrap:anywhere; }
+.managed-user-main>span { font-size:11px; color:#7a847d; overflow-wrap:anywhere; }
+.managed-user-tags { display:flex; align-items:center; flex-wrap:wrap; gap:6px; margin-top:3px; }
+.role-pill,.account-state { display:inline-flex; align-items:center; gap:4px; padding:4px 7px; border-radius:20px; font-size:10px; font-weight:700; }
+.role-pill.admin { background:#f1eaff; color:#6941a5; }.role-pill.support_agent { background:#e8f2ff; color:#315f9b; }.role-pill.customer { background:#edf2ed; color:#58655b; }
+.account-state.active { background:#e8f7ed; color:#287344; }.account-state.inactive { background:#fff0ed; color:#a33d2b; }
+.account-toggle { display:inline-flex; align-items:center; justify-content:center; gap:5px; border:1px solid #e0e5e0; border-radius:7px; background:#fff; color:#58645c; padding:8px 9px; font:600 10px 'DM Sans',sans-serif; cursor:pointer; flex-shrink:0; }
+.account-toggle:hover { background:#f7f8f7; }.account-toggle:disabled { opacity:.45; cursor:not-allowed; }
+.user-success { margin:0 0 16px; border:1px solid #bde5c8; background:#effaf1; color:#246b3b; padding:12px 14px; border-radius:9px; font-size:13px; }
+
+/* Ticket status editor */
+.ticket-management-card { flex-wrap:wrap; }
+.ticket-resolution-preview { margin-top:9px !important; color:#5b685f !important; line-height:1.5; white-space:pre-wrap; }
+.ticket-edit-toggle { display:inline-flex; align-items:center; gap:5px; border:1px solid #dfe5df; border-radius:8px; background:#fff; padding:7px 10px; color:#45534a; font:600 11px 'DM Sans',sans-serif; cursor:pointer; }
+.ticket-status-editor { flex:0 0 100%; display:grid; grid-template-columns:minmax(150px, .7fr) minmax(240px, 2fr) auto; gap:12px; align-items:end; padding-top:15px; border-top:1px solid #edf0ed; }
+.ticket-status-editor label { display:grid; gap:7px; font-size:11px; color:#5b665f; font-weight:700; }
+.ticket-status-editor textarea { resize:vertical; min-height:64px; }
+.ticket-status-editor .user-create-button { white-space:nowrap; }
+@media(max-width:900px) { .user-admin-layout { grid-template-columns:1fr; } .ticket-status-editor { grid-template-columns:1fr; } }
+@media(max-width:600px) { .managed-user-row { align-items:flex-start; flex-wrap:wrap; } .account-toggle { margin-left:50px; } .user-create-card,.user-list-card { padding:16px; } }

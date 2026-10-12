@@ -1,14 +1,15 @@
 
 from rest_framework.routers import DefaultRouter
-from django.urls import path
+from django.urls import path, include
 
-from .views import TicketViewSet, ConversationViewSet
 from .views import (
-    TicketViewSet,
     ConversationViewSet,
-    SupportAgentListView,
     MeView,
     RegisterView,
+    SupportAgentListView,
+    TicketViewSet,
+    UserManagementDetailView,
+    UserManagementView,
 )
 
 
@@ -42,6 +43,16 @@ urlpatterns = [
         RegisterView.as_view(),
         name="register"
     ),
+    path("users/", 
+         UserManagementView.as_view(), 
+         name="user-management"),
+
+    path("users/<int:pk>/", 
+         UserManagementDetailView.as_view(), 
+         name="user-management-detail"),
+
+    path("", 
+         include(router.urls)),
 ]
 
 urlpatterns += router.urls
